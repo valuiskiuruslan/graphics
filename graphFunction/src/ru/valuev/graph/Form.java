@@ -41,6 +41,8 @@ public class Form extends JFrame {
 	private double yMinScale;
 	private double xFinalScale;
 	private double yMaxScale;
+	
+	private double resize = 2.5;
 
 	private JTextField txtXstart;
 	private JTextField txtYmin;
@@ -52,6 +54,8 @@ public class Form extends JFrame {
 	private JTextField txtMovingPointX;
 	private JTextField txtMovingPointY;
 	
+	
+	private boolean isFirstTime = true;
 
 	public Form() {
 		setSize(new Dimension(616, 322));
@@ -100,12 +104,14 @@ public class Form extends JFrame {
 			public void mouseWheelMoved(MouseWheelEvent e) {
 
 				double factor = (e.getWheelRotation() == 1) ? 2d : (1d / 2d);
+				
+				
 
 				if (scale < 16d) {
-					xStart = ((xStart == 0) ? 1 : xStart) * factor;
-					yMin = ((yMin == 0) ? 1 : yMin) * factor;
-					xFinal = ((xFinal == 0) ? 1 : xFinal) * factor;
-					yMax = ((yMax == 0) ? 1 : yMax) * factor;
+//					xStart = ((xStart == 0) ? 1 : xStart) * factor;
+//					yMin = ((yMin == 0) ? 1 : yMin) * factor;
+//					xFinal = ((xFinal == 0) ? 1 : xFinal) * factor;
+//					yMax = ((yMax == 0) ? 1 : yMax) * factor;
 					
 //					xStartScale *= factor;
 //					yMinScale *= factor;
@@ -117,18 +123,57 @@ public class Form extends JFrame {
 //					xFinalScale = ((xFinalScale == 0) ? 1 : xFinalScale) * factor;
 //					yMaxScale = ((yMaxScale == 0) ? 1 : yMaxScale) * factor;
 					
-					boolean isIncrease = (factor == 2);
+					boolean isIncrease = (factor == (1d / 2d));
 					
 					outputCoordinate(xStart, yMin, xFinal, yMax);
-					//setCoordinate(xStartScale, yMinScale, xFinalScale, yMaxScale, isIncrease);
+					//setScale(isIncrease);
+					
+					
+					
+					
+				//	txtWheel.setText(resize + "");
+					
+					if (isIncrease) {						
+						resize *= factor;
+						
+						yMax -= resize;
+						yMin += resize;
+						
+						xFinal -= resize;
+						xStart += resize;
+						
+						
+						
+					} else {
+//						if (isFirstTime) {
+//							resize /= factor;
+//							isFirstTime = false;
+//						}
+						
+						if (resize < 40) {
+						
+						yMax += resize;
+						yMin -= resize;
+						
+						xFinal += resize;
+						xStart -= resize;
+						
+						resize *= factor;
+						}
+					}
+					
 					repaint();
 					
+				
 					scale *= factor;
+					
 				}
 				
-				if (scale >= 16d && factor == 1 / 2d)
-					scale *= factor;
-				txtWheel.setText(scale + "");
+				if (scale >= 16d && factor == 1 / 2d) {
+					//resize *= factor;
+					scale *= factor; 		
+				}
+				txtWheel.setText(resize + "");
 			}
 
 		});
@@ -230,10 +275,10 @@ public class Form extends JFrame {
 	}
 
 	private void intializeCordiante() {
-		xStart  = -5;
-		yMin = -5;
-		xFinal = 5;
-		yMax = 5;
+		xStart  = -2.5;
+		yMin = -2.5;
+		xFinal = 2.5;
+		yMax = 2.5;
 	}
 
 	private double func1(double x) {
@@ -279,33 +324,37 @@ public class Form extends JFrame {
 		currentX = e.getX();
 		currentY = e.getY();
 
-		x *= (scale / 35);
-		y *= (scale / 35);
+		x *= (scale / 70);
+		y *= (scale / 70);
 
 		xStart += x;
 		yMin += y;
 		xFinal += x;
 		yMax += y;
 
-		txtCoordinates.setText("dragged: " + x + " " + y);
+		txtCoordinates.setText(String.format("dragged: x = %.3f y = %.3f", x, y));
 		outputCoordinate(xStart, yMin, xFinal, yMax);
 
 		panel.repaint();
 	}
 	
-	private void setCoordinate(double xStartScale, double yMinScale,
-			double xFinalScale, double yMaxScale, boolean isIncrease) {
+	private void setScale(boolean isIncrease) {
+		double SC = 2d * scale;
+		
 		
 		if (isIncrease) {
-			xStart -= xStartScale;
-			yMin -= yMinScale;
-			xFinal += xFinalScale;
-			yMax += yMaxScale;
+			
+			xStart -= SC;
+		//	yMin -=  scale;
+			xFinal += SC;
+		//	yMax -= scale;
+			
+			
 		} else {
-			xStart += xStartScale;
-			yMin += yMinScale;
-			xFinal += xFinalScale;
-			yMax += yMaxScale;
+			xStart += SC;
+			//yMin += yMinScale;
+			xFinal -= SC;
+			//yMax += yMaxScale;
 		}
 		
 		panel.repaint();
@@ -313,9 +362,9 @@ public class Form extends JFrame {
 	}
 
 	private void outputCoordinate(double x0, double y0, double x1, double y1) {
-		txtXstart.setText(Double.toString(x0));
-		txtYmin.setText(Double.toString(y0));
-		txtXfinal.setText(Double.toString(x1));
-		txtYmax.setText(Double.toString(x1));
+		txtXstart.setText(String.format("%.4f", x0));
+		txtYmin.setText(String.format("%.4f", y0));
+		txtXfinal.setText(String.format("%.4f", x1));
+		txtYmax.setText(String.format("%.4f", y1));
 	}
 }

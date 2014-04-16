@@ -35,7 +35,12 @@ public class Form extends JFrame {
 	private double xFinal;
 	private double yMax;
 
-	private double scale = 1;
+	private double scale = 1;	
+	
+	private double xStartScale;
+	private double yMinScale;
+	private double xFinalScale;
+	private double yMaxScale;
 
 	private JTextField txtXstart;
 	private JTextField txtYmin;
@@ -46,6 +51,7 @@ public class Form extends JFrame {
 	private int movingPointX = 0;
 	private JTextField txtMovingPointX;
 	private JTextField txtMovingPointY;
+	
 
 	public Form() {
 		setSize(new Dimension(616, 322));
@@ -101,7 +107,20 @@ public class Form extends JFrame {
 					xFinal = ((xFinal == 0) ? 1 : xFinal) * factor;
 					yMax = ((yMax == 0) ? 1 : yMax) * factor;
 					
+//					xStartScale *= factor;
+//					yMinScale *= factor;
+//					xFinalScale *= factor;
+//					yMaxScale *= factor;
+					
+//					xStartScale = ((xStartScale == 0) ? 1 : xStartScale) * factor;
+//					yMinScale = ((yMinScale == 0) ? 1 : yMinScale) * factor;
+//					xFinalScale = ((xFinalScale == 0) ? 1 : xFinalScale) * factor;
+//					yMaxScale = ((yMaxScale == 0) ? 1 : yMaxScale) * factor;
+					
+					boolean isIncrease = (factor == 2);
+					
 					outputCoordinate(xStart, yMin, xFinal, yMax);
+					//setCoordinate(xStartScale, yMinScale, xFinalScale, yMaxScale, isIncrease);
 					repaint();
 					
 					scale *= factor;
@@ -111,6 +130,7 @@ public class Form extends JFrame {
 					scale *= factor;
 				txtWheel.setText(scale + "");
 			}
+
 		});
 
 		panel.addMouseMotionListener(new MouseMotionAdapter() {
@@ -206,22 +226,22 @@ public class Form extends JFrame {
 		lblY.setBounds(10, 45, 46, 14);
 		getContentPane().add(lblY);
 		
-		points = new Point[] { new Point(0, 0)};
+		points = new Point[] { new Point(0, 0)}; 
 	}
 
 	private void intializeCordiante() {
-		xStart = -5;
+		xStart  = -5;
 		yMin = -5;
 		xFinal = 5;
 		yMax = 5;
 	}
 
 	private double func1(double x) {
-		return 1 / x;
+		return x * x;
 	}
 
 	private double func2(double x) {
-		return x * x;
+		return Math.sin(x) + 100;
 	}
 
 	
@@ -271,6 +291,25 @@ public class Form extends JFrame {
 		outputCoordinate(xStart, yMin, xFinal, yMax);
 
 		panel.repaint();
+	}
+	
+	private void setCoordinate(double xStartScale, double yMinScale,
+			double xFinalScale, double yMaxScale, boolean isIncrease) {
+		
+		if (isIncrease) {
+			xStart -= xStartScale;
+			yMin -= yMinScale;
+			xFinal += xFinalScale;
+			yMax += yMaxScale;
+		} else {
+			xStart += xStartScale;
+			yMin += yMinScale;
+			xFinal += xFinalScale;
+			yMax += yMaxScale;
+		}
+		
+		panel.repaint();
+		
 	}
 
 	private void outputCoordinate(double x0, double y0, double x1, double y1) {
